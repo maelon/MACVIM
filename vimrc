@@ -115,6 +115,7 @@
 "
 " :se ff=unix                --更改文件格式，可选 unix、dos、mac
 " :se ft=cpp                 --更改文件语法着色模式
+" :r !date                   --添加当前时间
 
 " 判断是否处于GUI界面
 if has("gui_running")
@@ -163,9 +164,9 @@ set writebackup                " 设置无备份文件
 set autoread                   " 当文件在外部被修改时自动更新该文件
 set nobackup                   " 不生成备份文件
 set noswapfile                 " 不生成交换文件
-" set list                     " 显示特殊字符，其中Tab使用高亮~代替，尾部空白使用高亮点号代替
-set listchars=tab:\~\ ,trail:.
+"set list                      " 显示特殊字符，其中Tab使用高亮~代替，尾部空白使用高亮点号代替
 set expandtab                  " 将Tab自动转化成空格 [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
+set listchars=tab:>-,trail:-
 "set showmatch                 " 显示括号配对情况
 "set nowrap                    " 设置不自动换行
 
@@ -288,7 +289,15 @@ endfunc
 imap <leader>R <ESC>:call Compile_Run_Code()<CR>
 nmap <leader>R :call Compile_Run_Code()<CR>
 vmap <leader>R <ESC>:call Compile_Run_Code()<CR>
-" \T         一键加载作者信息
+" \F         一键加载作者信息
 imap <leader>T <ESC>:AuthorInfoDetect<CR><ESC>Gi
 nmap <leader>T :AuthorInfoDetect<CR><ESC>Gi
 vmap <leader>T <ESC>:AuthorInfoDetect<CR><ESC>Gi
+
+" js-beauty
+" autocmd FileType javascript noremap <buffer>  <C-S-F> :call JsBeautify()<CR>
+" autocmd FileType html noremap <buffer> <C-S-F> :call HtmlBeautify()<CR>
+" autocmd FileType css noremap <buffer> <C-S-F> :call CSSBeautify()<CR>
+" autocmd FileType javascript vnoremap <buffer>  <C-S-F> :call RangeJsBeautify()<CR>
+" autocmd FileType html vnoremap <buffer> <C-S-F> :call RangeHtmlBeautify()<CR>
+" autocmd FileType css vnoremap <buffer> <C-S-F> :call RangeCSSBeautify()<CR>
