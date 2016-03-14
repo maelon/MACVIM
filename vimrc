@@ -142,6 +142,7 @@ autocmd BufRead,BufNewFile *.txt         setlocal filetype=txt
 autocmd BufRead,BufNewFile *.md          setlocal filetype=markdown
 autocmd BufRead,BufNewFile *.jade        setlocal filetype=jade
 
+set t_Co=265                 " 设置支持256色
 set backspace=2                " 设置退格键可用
 set autoindent                 " 自动对齐
 set ai!                        " 设置自动缩进
@@ -164,9 +165,9 @@ set writebackup                " 设置无备份文件
 set autoread                   " 当文件在外部被修改时自动更新该文件
 set nobackup                   " 不生成备份文件
 set noswapfile                 " 不生成交换文件
-"set list                      " 显示特殊字符，其中Tab使用高亮~代替，尾部空白使用高亮点号代替
+"set list                       " 显示特殊字符，其中Tab使用高亮~代替，尾部空白使用高亮点号代替
+"set listchars=tab:>-,trail:-
 set expandtab                  " 将Tab自动转化成空格 [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
-set listchars=tab:>-,trail:-
 "set showmatch                 " 显示括号配对情况
 "set nowrap                    " 设置不自动换行
 
@@ -184,23 +185,46 @@ set fileformat=unix
 set fileformats=unix,dos,mac
 
 " 使用GUI界面时的设置
-if g:isGUI
+"if g:isGUI
+    ""winpos 20 20            " 指定窗口出现的位置，坐标原点在屏幕左上角
+    ""set lines=20 columns=90 " 指定窗口大小，lines为高度，columns为宽度
+    "set guioptions+=c        " 使用字符提示框
+    "set guioptions-=L        " 隐藏左侧滚动条
+    "set guioptions-=r        " 隐藏右侧滚动条
+    "set guioptions-=b        " 隐藏底部滚动条
+    ""set showtabline=0       " 隐藏Tab栏
+    "set cursorline           " 突出显示当前行
+"else
+    "let g:pathogen_disabled=["vim-airline"]
+"endif
+
+if exists('$ITERM_PROFILE') && exists('$TMUX')
+    set clipboard=unnamed
+endif
+
+if exists('$ITERM_PROFILE') || g:isGUI
     "winpos 20 20            " 指定窗口出现的位置，坐标原点在屏幕左上角
     "set lines=20 columns=90 " 指定窗口大小，lines为高度，columns为宽度
+
     set guioptions+=c        " 使用字符提示框
     set guioptions-=L        " 隐藏左侧滚动条
     set guioptions-=r        " 隐藏右侧滚动条
     set guioptions-=b        " 隐藏底部滚动条
     "set showtabline=0       " 隐藏Tab栏
     set cursorline           " 突出显示当前行
-else
-    let g:pathogen_disabled=["vim-airline"]
 endif
 
 " 加载pathogen插件管理器
 execute pathogen#infect()
 
-if g:isGUI
+"if g:isGUI
+    "set background=dark
+    "colorscheme solarized
+    "set guifont=Source\ Code\ Pro\ for\ Powerline:h13
+    "let g:airline_powerline_fonts=1
+"endif
+
+if exists('$ITERM_PROFILE') || g:isGUI
     set background=dark
     colorscheme solarized
     set guifont=Source\ Code\ Pro\ for\ Powerline:h12
@@ -280,6 +304,8 @@ func! Compile_Run_Code()
         exec "!python3 %:t"
     elseif &filetype == "javascript"
         exec "!node %:t"
+    elseif &filetype == "typescript"
+        exec "!tsc %:t"
     elseif &filetype == "sh"
         exec "!bash %:t"
     endif
@@ -301,3 +327,48 @@ vmap <leader>T <ESC>:AuthorInfoDetect<CR><ESC>Gi
 " autocmd FileType javascript vnoremap <buffer>  <C-S-F> :call RangeJsBeautify()<CR>
 " autocmd FileType html vnoremap <buffer> <C-S-F> :call RangeHtmlBeautify()<CR>
 " autocmd FileType css vnoremap <buffer> <C-S-F> :call RangeCSSBeautify()<CR>
+
+
+" CtrlP
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+" let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
+" tmux vim cursor
+"if exists('$ITERM_PROFILE')
+    "if exists('$TMUX')
+        "let &t_SI = "\<Esc>[3 q"
+        "let &t_EI = "\<Esc>[0 q"
+    "else
+        "let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+        "let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+    "endif
+"end
+
+" wrap for tmux
+function! WrapForTmux(s)
+    if !exists('$TMUX')
+        return a:s
+    endif
+
+    let tmux_start = "\<Esc>Ptmux;"
+    let tmux_end = "\<Esc>\\"
+
+    return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+function! XTermPasteBegin()
+    set pastetoggle=<Esc>[201~
+    set paste
+    return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
