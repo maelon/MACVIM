@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/etc'
+let g:netrw_dirhist_2='/Users/maelon/.vim/bundle'
+let g:netrw_dirhist_3='/Users/maelon/Code/work/ymatou/ShareBtn'
+let g:netrw_dirhist_4='/usr/local/var/log/nginx'
+let g:netrw_dirhist_5='/usr/local/var/log'
+let g:netrw_dirhist_6='/Users/maelon/Code/work/ymatou/ShareBtn'
