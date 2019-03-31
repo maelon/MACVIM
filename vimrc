@@ -141,6 +141,8 @@ autocmd BufRead,BufNewFile *.as,*.asc    setlocal filetype=actionscript
 autocmd BufRead,BufNewFile *.txt         setlocal filetype=txt
 autocmd BufRead,BufNewFile *.md          setlocal filetype=markdown
 autocmd BufRead,BufNewFile *.jade        setlocal filetype=jade
+autocmd BufRead,BufNewFile *.wxml        setlocal filetype=xml
+autocmd BufRead,BufNewFile *.wxss        setlocal filetype=css
 
 set t_Co=265                 " 设置支持256色
 set backspace=2                " 设置退格键可用
@@ -286,6 +288,9 @@ noremap <C-J>     <C-W>j
 noremap <C-K>     <C-W>k
 noremap <C-H>     <C-W>h
 noremap <C-L>     <C-W>l
+noremap _         :vertical res -20<CR>
+noremap +         :vertical res +20<CR>
+noremap <C-\>     :vertical res 120<CR>
 noremap <C-TAB>   :MBEbn<CR>
 noremap <C-S-TAB> :MBEbp<CR>
 " ======= 编译 && 运行 && 模板 ======= "
